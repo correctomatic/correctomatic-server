@@ -25,17 +25,17 @@
   ],
   "queues": [
     {
-      "name": "queue_a",
+      "name": "pending_corrections",
       "vhost": "/",
       "durable": true
     },
     {
-      "name": "queue_b",
+      "name": "running_corrections",
       "vhost": "/",
       "durable": true
     },
     {
-      "name": "queue_c",
+      "name": "finished_corrections",
       "vhost": "/",
       "durable": true
     }

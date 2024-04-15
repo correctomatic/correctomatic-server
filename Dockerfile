@@ -7,9 +7,6 @@ ARG APP_USER_PASSWORD_HASH
 COPY config/definitions.json /etc/rabbitmq/definitions.json
 COPY config/rabbitmq.config /etc/rabbitmq/rabbitmq.config
 
-RUN echo $ADMIN_PASSWORD_HASH
-RUN echo $APP_USER_PASSWORD_HASH
-
 # Replace passwords in configuration
 RUN ESCAPED_ADMIN_HASH=$(printf '%s\n' "$ADMIN_PASSWORD_HASH" | sed -e 's/[\/&]/\\&/g') && \
     echo $ESCAPED_ADMIN_HASH && \
