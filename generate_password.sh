@@ -9,4 +9,8 @@ function encode_password()
     echo $PASS
 }
 
-encode_password "user"
+if [ -z "$1" ]; then
+    echo "Usage: $0 <password>"
+    exit 1
+fi
+encode_password $1

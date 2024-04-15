@@ -1,5 +1,6 @@
 services:
   rabbitmq:
+    tty: true
     build:
       context: .
       args:
