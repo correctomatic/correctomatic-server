@@ -22,3 +22,8 @@ docker run --name ${rabbitmq_name} -d \
     -v $PWD/rabbitmq/${config_dir}/definitions.json:/opt/definitions.json:ro \
     -v $PWD/rabbitmq/${config_dir}/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro \
     rabbitmq:3-management
+
+
+docker build
+
+docker build -t correctomatic_mq .
