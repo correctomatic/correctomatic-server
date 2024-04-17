@@ -1,6 +1,5 @@
 services:
   rabbitmq:
-    tty: true
     build:
       context: ./rabbitmq
       args:
@@ -9,10 +8,10 @@ services:
     ports:
       - "5672:5672"  # RabbitMQ
       - "15672:15672"  # RabbitMQ Management UI
-  # correctomatic:
-  #   build:
-  #     context: .
-  #   depends_on:
-  #     - rabbitmq
-  #   ports:
-  #     - "8080:8080"  # Completer
+  correctomatic:
+    build:
+      context: ./correctomatic
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3000:3000"
