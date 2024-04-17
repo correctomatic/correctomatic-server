@@ -2,10 +2,17 @@ services:
   rabbitmq:
     tty: true
     build:
-      context: .
+      context: ./rabbitmq
       args:
         - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
         - APP_USER_PASSWORD_HASH=${APP_USER_PASSWORD_HASH}
     ports:
       - "5672:5672"  # RabbitMQ
       - "15672:15672"  # RabbitMQ Management UI
+  # correctomatic:
+  #   build:
+  #     context: .
+  #   depends_on:
+  #     - rabbitmq
+  #   ports:
+  #     - "8080:8080"  # Completer

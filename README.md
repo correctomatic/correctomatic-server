@@ -1,29 +1,35 @@
+# Correctomatic server
 
+The purpose of this project is to provide a docker compose for starting a correctomatic system.
 
-https://hub.docker.com/_/rabbitmq
+The correctomatic system has these components:
+- A RabbitMQ queue for sending messages between the subsystems
+- The correction API: is an API endpoint for launching corrections. It puts the correction on the RabbitMQ queue for further processing.
+- The correction starter: Receives works from Rabbit and launches the docker container for correcting the exercise.
+- The correction completer: Detects when a container finished and stores the correction result.
+- The correction notifier: Calls the callback with the correction results, notifying the client which started the correction.
 
+The API and starter subsystems must share a path to the correction files: the easiest way is to run them in the same machine. This project launches one container for the RabbitMQ server and another one for the rest of the processes.
 
-$ docker run --rm -d --hostname my-rabbit --name some-rabbit -p 8080:15672 rabbitmq:3-management
+It's planned to add an intermediate process for transfering the files to another machine, so they can be run in different machines
 
+## Launch the server
 
+You can launch all systems with `docker compose up`
 
-docker run --name ${rabbitmq_name} -d -p ${rabbitmq_port}:15672 -v $PWD/rabbitmq/${env}/data:/var/lib/rabbitmq:rw -v $PWD/rabbitmq/${env}/definitions.json:/opt/definitions.json:ro -v $PWD/rabbitmq/${env}/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro rabbitmq:3-management
+Alternatively, you can launch the RabbitMQ and the correctomatic processes with:
+- `docker compose up rabbitmq`
+- `docker compose up correctomatic`
 
-Launch server:
-----------------------------
+You don't need the correctomatic processes for development: you should launch the RabbitMQ server and run the other processes in your machine.
 
-rabbitmq_name=rabbitmq
-rabbitmq_port=8080
-data_dir=data
-config_dir=config
-docker run --name ${rabbitmq_name} -d \
-    -p ${rabbitmq_port}:15672 \
-    -v $PWD/rabbitmq/${data_dir}/data:/var/lib/rabbitmq:rw \
-    -v $PWD/rabbitmq/${config_dir}/definitions.json:/opt/definitions.json:ro \
-    -v $PWD/rabbitmq/${config_dir}/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro \
-    rabbitmq:3-management
+## RabbitMQ
+The container exposes the ports `5672` for RabbitMQ and `15672` for the web management UI.
 
+The users are `admin` (default password `admin`) for management and `app_user` (default password `user`)f or the correctomatic processes. You can change the password modifying the variables `ADMIN_PASSWORD_HASH` and `APP_USER_PASSWORD_HASH` in the `.env` file. The hash can be generated with `generate_password <password>.sh`
 
-docker build
+The management interface can be accessed at [http://localhost:15672](http://localhost:15672)
 
-docker build -t correctomatic_mq .
+## Correctomatic
+
+TO-DO
