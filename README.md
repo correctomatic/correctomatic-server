@@ -9,17 +9,18 @@ The correctomatic system has these components:
 - The correction completer: Detects when a container finished and stores the correction result.
 - The correction notifier: Calls the callback with the correction results, notifying the client which started the correction.
 
-The API and starter subsystems must share a path to the correction files: the easiest way is to run them in the same machine. This project launches one container for the RabbitMQ server and another one for the rest of the processes.
-
-It's planned to add an intermediate process for transfering the files to another machine, so they can be run in different machines
+The API and starter subsystems must share a path to the correction files: the easiest way is to run them in the same machine. This project launches one container for each service, and uses a volume for a shared folder between correctomatic components.
 
 ## Launch the server
 
 You can launch all systems with `docker compose up`
 
-Alternatively, you can launch the RabbitMQ and the correctomatic processes with:
+Alternatively, you can launch/stop the RabbitMQ and the correctomatic processes separately with:
 - `docker compose up rabbitmq`
-- `docker compose up correctomatic`
+- `docker compose up api`
+- `docker compose up starter` (TO-DO)
+- `docker compose up completer` (TO-DO)
+- `docker compose up notifier` (TO-DO)
 
 You don't need the correctomatic processes for development: you should launch the RabbitMQ server and run the other processes in your machine.
 
@@ -30,6 +31,19 @@ The users are `admin` (default password `admin`) for management and `app_user` (
 
 The management interface can be accessed at [http://localhost:15672](http://localhost:15672)
 
-## Correctomatic
+## Correctomatic components
 
 TO-DO
+
+Launch a work for correction:
+
+```bash
+curl --request POST \
+  --url http://localhost:3000/grade \
+  --header 'Content-Type: multipart/form-data' \
+  --form file=@<PATH OF YOUR FILE> \
+  --form work_id=<A RANDOM WORK ID> \
+  --form assignment_id=<THE ASSIGNMENT ID> \
+  --form callback=http://localhost:9000
+```
+You will receive a POST on the callback URL once the work has finished

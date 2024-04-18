@@ -8,10 +8,24 @@ services:
     ports:
       - "5672:5672"  # RabbitMQ
       - "15672:15672"  # RabbitMQ Management UI
-  correctomatic:
+  api:
     build:
-      context: ./correctomatic
+      context: ./correctomatic/api
+      args:
+        SHARED_FOLDER: /tmp/correctomatic-uploads
     depends_on:
       - rabbitmq
     ports:
       - "3000:3000"
+    user: "node"
+    volumes:
+      - shared_folder:/tmp/correctomatic-uploads
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: app_user
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      UPLOAD_DIRECTORY: /tmp/correctomatic-uploads
+
+volumes:
+  shared_folder:
