@@ -19,4 +19,4 @@ WORKDIR /home/node/app/correction-api
 RUN npm install
 
 EXPOSE 3000
-CMD [ "node", "src/index.js" ]
+ENTRYPOINT [ "node", "src/index.js" ]

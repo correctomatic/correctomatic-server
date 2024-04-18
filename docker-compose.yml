@@ -8,6 +8,8 @@ services:
     ports:
       - "5672:5672"  # RabbitMQ
       - "15672:15672"  # RabbitMQ Management UI
+
+  # API service for sending works to the correction queue
   api:
     build:
       context: ./correctomatic/api
@@ -26,6 +28,29 @@ services:
       RABBITMQ_USER: app_user
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
       UPLOAD_DIRECTORY: /tmp/correctomatic-uploads
+
+  # Process for starting the correction containers
+  starter:
+    build:
+      context: ./correctomatic/starter
+      args:
+        SHARED_FOLDER: /tmp/correctomatic-uploads
+        DELAY_SECONDS: 10 # To give some time to RabbitMQ to start
+        # This MUST match the group ID of the Docker group on your host
+        DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
+    depends_on:
+      - rabbitmq
+    user: "node"
+    volumes:
+      - shared_folder:/tmp/correctomatic-uploads
+      # This volume is needed to communicate with the Docker daemon on the host
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: app_user
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      DONT_START_CONTAINER: S
 
 volumes:
   shared_folder:
