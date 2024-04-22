@@ -50,7 +50,7 @@ services:
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: app_user
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-      DONT_START_CONTAINER: S
+      DONT_START_CONTAINER: S # (for debugging the completer: if S containers should be started by hand)
 
 volumes:
   shared_folder:
