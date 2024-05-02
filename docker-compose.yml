@@ -2,10 +2,21 @@ services:
   redis:
     build:
       context: ./redis
-    environment:
-      - REDIS_PASSWORD_HASH=${REDIS_PASSWORD_HASH}
+    container_name: redis
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD_HASH=${REDIS_PASSWORD_HASH}
+
+  redis-insight:
+    image: redis/redisinsight
+    container_name: redis-insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight:/data
+    # I don't know how to initialize the connection data
+    # You should enter the connection data manually in the web interface
 
   dashboard:
     image: igrek8/bullmq-dashboard
@@ -17,3 +28,18 @@ services:
       "--bullmq-prefix", "bull",
       "--redis-password", "papaya"
       ]
+
+  # bullboard:
+  #   container_name: bullboard
+  #   # image: deadly0/bull-board # This one is too old
+  #   image: venatum/bull-board # Doesn't seem to work
+  #   ports:
+  #     - 3001:3000
+  #   environment:
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - REDIS_PASSWORD=papaya
+  #     - BULL_PREFIX=bull
+
+volumes:
+  redisinsight:
