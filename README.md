@@ -47,3 +47,10 @@ curl --request POST \
   --form callback=http://localhost:9000
 ```
 You will receive a POST on the callback URL once the work has finished
+
+
+
+
+### BullMQ information and tests
+
+docker run -it --rm --network=correctomatic-server_default redis redis-cli -h redis -p 6379 -a banana

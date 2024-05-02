@@ -1,85 +1,13 @@
 services:
-  rabbitmq:
+  redis:
     build:
-      context: ./rabbitmq
-      args:
-        - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
-        - APP_USER_PASSWORD_HASH=${APP_USER_PASSWORD_HASH}
+      context: ./redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
-      - "5672:5672"  # RabbitMQ
-      - "15672:15672"  # RabbitMQ Management UI
-
-  # API service for sending works to the correction queue
-  api:
-    build:
-      context: ./correctomatic/api
-      args:
-        SHARED_FOLDER: /tmp/correctomatic-uploads
-    depends_on:
-      - rabbitmq
-    ports:
-      - "3000:3000"
-    user: "node"
-    volumes:
-      - shared_folder:/tmp/correctomatic-uploads
-    environment:
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: app_user
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-      UPLOAD_DIRECTORY: /tmp/correctomatic-uploads
-
-
-  # This is the base image for the correction containers
-  runner_base:
-    build:
-      context: ./correctomatic/runner_base
-      args:
-        SHARED_FOLDER: /tmp/correctomatic-uploads
-        # This MUST match the group ID of the Docker group on your host
-        # Specify it in the .env file
-        DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
-        DELAY_SECONDS: 10 # To give some time to RabbitMQ to start
-    image: correctomatic_runner_base
-    entrypoint: ["echo", "This is the base image for the correction containers"]
-
-  # Process for starting the correction containers
-  starter:
-    image: correctomatic_runner_base
-    depends_on:
-      - runner_base
-      - rabbitmq
-    user: "node"
-    entrypoint: ["/delayed_start.sh", "starter"]
-    volumes:
-      - shared_folder:/tmp/correctomatic-uploads
-      # This volume is needed to communicate with the Docker daemon on the host
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: app_user
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-      # DONT_START_CONTAINER: S # (for debugging the completer: if S containers should be started by hand)
-
-
-  # Process for receiveng the correction containers response
-  completer:
-    image: correctomatic_runner_base
-    depends_on:
-      - runner_base
-      - rabbitmq
-    user: "node"
-    entrypoint: ["/delayed_start.sh", "completer"]
-    volumes:
-      # - shared_folder:/tmp/correctomatic-uploads
-      # This volume is needed to communicate with the Docker daemon on the host
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: app_user
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-
-volumes:
-  shared_folder:
+      - "6379:6379"
+  # redis:
+  #   image: redis:7.2-alpine
+  #   container_name: redis
+  #   ports:
+  #     - "6379:6379"
