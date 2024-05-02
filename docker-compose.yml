@@ -11,10 +11,9 @@ services:
     image: igrek8/bullmq-dashboard
     ports:
       - "3000:3000"
-    command: ["--redis-host", "redis"]
-    # environment:
-    #   - BULLMQ_PREFIX=bull
-    #   - REDIS_HOST=redis
-
-networks:
-  correctomatic:
+    # TO-DO: this image doesn't addmit setting a user
+    command: [
+      "--redis-host", "redis",
+      "--bullmq-prefix", "bull",
+      "--redis-password", "papaya"
+      ]

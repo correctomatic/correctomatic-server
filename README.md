@@ -53,6 +53,14 @@ You will receive a POST on the callback URL once the work has finished
 
 ### BullMQ information and tests
 
+Implemented:
+https://github.com/igrek8/bullmq-dashboard
+
+https://hub.docker.com/r/igrek8/bullmq-dashboard
+
+
+Alternatives:
+https://github.com/felixmosh/bull-board
 
 
 ### Redis
@@ -63,5 +71,10 @@ USER=correctomatic
 PASS=banana
 docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://$USER:$PASS@redis -p 6379
 ```
+
+To see the contents of the redis server:
+`docker run --rm --network correctomatic-server_default -p 5540:5540 redis/redisinsight`
+
+You must enter redis:6379 and the Redis' user and password as a new connection. In theory, you won't need to do that.
 
 
