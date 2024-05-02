@@ -3,11 +3,6 @@ services:
     build:
       context: ./redis
     environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD_HASH=${REDIS_PASSWORD_HASH}
     ports:
       - "6379:6379"
-  # redis:
-  #   image: redis:7.2-alpine
-  #   container_name: redis
-  #   ports:
-  #     - "6379:6379"
