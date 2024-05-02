@@ -6,3 +6,15 @@ services:
       - REDIS_PASSWORD_HASH=${REDIS_PASSWORD_HASH}
     ports:
       - "6379:6379"
+
+  dashboard:
+    image: igrek8/bullmq-dashboard
+    ports:
+      - "3000:3000"
+    command: ["--redis-host", "redis"]
+    # environment:
+    #   - BULLMQ_PREFIX=bull
+    #   - REDIS_HOST=redis
+
+networks:
+  correctomatic:

@@ -58,51 +58,10 @@ You will receive a POST on the callback URL once the work has finished
 ### Redis
 
 Connect to redis:
-```js
+```sh
 USER=correctomatic
 PASS=banana
 docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://$USER:$PASS@redis -p 6379
 ```
 
-
-
-
-https://medium.com/aeturnuminc/securing-redis-with-access-control-lists-acls-54623606f411
-
-https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/
-
-https://www.dbi-services.com/blog/redis-using-access-control-list-acl-part2/
-
-docker run -it --rm --network=correctomatic-server_default redis redis-cli -h redis -p 6379 -a banana
-
-With a different user:
-docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://correctomatic@redis -p 6379 -a "banana"
-
-
-# Generate password hash for the new user
-password="banana"
-password_hash=$(openssl passwd -1 "$password")
-
-echo -n "hello world" | sha256sum
-
-user correctomatic on $1$5XfbNrhL$vVTCo719HEKNpuN/ApW7u. +@all -@all
-# user correctomatic on #b493d48364afe44d11c0165cf470a4164d1e2609911ef998be868d46ade3de4e +@all -@all
-
-user default on +@all -@all
-"user correctomatic on sanitize-payload #b493d48364afe44d11c0165cf470a4164d1e2609911ef998be868d46ade3de4e resetchannels -@all"
-"user default on sanitize-payload #98a4f7655958a385a0667bad61bac1b10f31df5f39eb57e06527dc1949acaf18 ~* &* +@all"
-
-papaya: 98a4f7655958a385a0667bad61bac1b10f31df5f39eb57e06527dc1949acaf18
-banana: b493d48364afe44d11c0165cf470a4164d1e2609911ef998be868d46ade3de4e
-
-
-
-
-docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://correctomatic:banana@redis -p 6379
-
-docker run --rm --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
-
-acl whoami
-acl list
-acl setuser correctomatic >banana
 
