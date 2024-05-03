@@ -53,6 +53,11 @@ You will receive a POST on the callback URL once the work has finished
 
 ### BullMQ information and tests
 
+- [Redis Insights](http://localhost:5540)
+- [BullMQ dashboard](http://localhost:3000)
+
+
+
 Implemented:
 https://github.com/igrek8/bullmq-dashboard
 

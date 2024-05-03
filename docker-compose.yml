@@ -2,7 +2,7 @@ services:
   redis:
     build:
       context: ./redis
-    container_name: redis
+    container_name: correctomatic-redis
     ports:
       - "6379:6379"
     environment:
@@ -10,7 +10,7 @@ services:
 
   redis-insight:
     image: redis/redisinsight
-    container_name: redis-insight
+    container_name: correctomatic-redisinsight
     ports:
       - "5540:5540"
     volumes:
@@ -20,6 +20,7 @@ services:
 
   dashboard:
     image: igrek8/bullmq-dashboard
+    container_name: correctomatic-dashboard
     ports:
       - "3000:3000"
     # TO-DO: this image doesn't addmit setting a user
