@@ -11,4 +11,5 @@ RUN ESCAPED_PASSWORD_HASH=$(printf '%s\n' "$REDIS_PASSWORD_HASH" | sed -e 's/[\/
     sed -i "s/<REDIS_PASSWORD_HASH>/$ESCAPED_PASSWORD_HASH/g" /usr/local/etc/redis/acl.conf
 
 EXPOSE 6379
+
 CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]

@@ -7,6 +7,9 @@ services:
       - "6379:6379"
     environment:
       - REDIS_PASSWORD_HASH=${REDIS_PASSWORD_HASH}
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
 
   redis-insight:
     image: redis/redisinsight
@@ -30,17 +33,6 @@ services:
       "--redis-password", "papaya"
       ]
 
-  # bullboard:
-  #   container_name: bullboard
-  #   # image: deadly0/bull-board # This one is too old
-  #   image: venatum/bull-board # Doesn't seem to work
-  #   ports:
-  #     - 3001:3000
-  #   environment:
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - REDIS_PASSWORD=papaya
-  #     - BULL_PREFIX=bull
-
 volumes:
-  redisinsight:
+  redisinsight:   # Connection data is saved here
+  redis_data:     # For persisting bullmq data
