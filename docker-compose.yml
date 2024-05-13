@@ -1,25 +1,24 @@
 services:
   redis:
-    build:
-      context: ./redis
+    image: redis:7
     container_name: correctomatic-redis
+    # Sets the password for the redis server and
+    # enables the appendonly mode
+    command: bash -c "redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}"
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_PASSWORD_HASH=${REDIS_PASSWORD_HASH}
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes
 
   redis-insight:
     image: redis/redisinsight
     container_name: correctomatic-redisinsight
     ports:
       - "5540:5540"
+    # I don't know how to initialize the connection data
+    # You should enter the connection data manually in the web interface,
+    # so I've created a volume to persist the data
     volumes:
       - redisinsight:/data
-    # I don't know how to initialize the connection data
-    # You should enter the connection data manually in the web interface
+
 
   dashboard:
     image: igrek8/bullmq-dashboard
@@ -30,7 +29,7 @@ services:
     command: [
       "--redis-host", "redis",
       "--bullmq-prefix", "bull",
-      "--redis-password", "papaya"
+      "--redis-password", "${REDIS_PASSWORD}"
       ]
 
 volumes:

@@ -77,6 +77,12 @@ PASS=banana
 docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://$USER:$PASS@redis -p 6379
 ```
 
+Open a shell in redis container:
+```sh
+docker exec -it correctomatic-redis /bin/sh
+alias ll='ls -la'
+```
+
 To see the contents of the redis server:
 `docker run --rm --network correctomatic-server_default -p 5540:5540 redis/redisinsight`
 
