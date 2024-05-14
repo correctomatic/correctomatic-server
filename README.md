@@ -1,35 +1,42 @@
 # Correctomatic server
 
-The purpose of this project is to provide a docker compose for starting a correctomatic system.
+The purpose of this project is to provide a docker compose file for starting a correctomatic system.
 
 The correctomatic system has these components:
-- A RabbitMQ queue for sending messages between the subsystems
-- The correction API: is an API endpoint for launching corrections. It puts the correction on the RabbitMQ queue for further processing.
-- The correction starter: Receives works from Rabbit and launches the docker container for correcting the exercise.
-- The correction completer: Detects when a container finished and stores the correction result.
-- The correction notifier: Calls the callback with the correction results, notifying the client which started the correction.
+- A **Redis** server as a backend for BullMQ queue system
+- The **correction API**: is an API endpoint for launching corrections. It puts the correction on the RabbitMQ queue for further processing.
+- The **correction starter**: Receives works from Rabbit and launches the docker container for correcting the exercise.
+- The **correction completer**: Detects when a container finished and stores the correction result.
+- The **correction notifier**: Calls the callback with the correction results, notifying the client which started the correction.
 
 The API and starter subsystems must share a path to the correction files: the easiest way is to run them in the same machine. This project launches one container for each service, and uses a volume for a shared folder between correctomatic components.
 
 ## Launch the server
 
-You can launch all systems with `docker compose up`
+You can launch all the systems with `docker compose up`.
 
-Alternatively, you can launch/stop the RabbitMQ and the correctomatic processes separately with:
-- `docker compose up rabbitmq`
+Alternatively, you can launch/stop the Redis and the correctomatic processes separately with:
+- `docker compose up redis`
 - `docker compose up api`
 - `docker compose up starter` (TO-DO)
 - `docker compose up completer` (TO-DO)
 - `docker compose up notifier` (TO-DO)
 
-You don't need the correctomatic processes for development: you should launch the RabbitMQ server and run the other processes in your machine.
+You don't need the correctomatic processes for development: you should launch the Redis server and run the other processes in your machine.
 
-## RabbitMQ
-The container exposes the ports `5672` for RabbitMQ and `15672` for the web management UI.
+## Monitoring
 
-The users are `admin` (default password `admin`) for management and `app_user` (default password `user`)f or the correctomatic processes. You can change the password modifying the variables `ADMIN_PASSWORD_HASH` and `APP_USER_PASSWORD_HASH` in the `.env` file. The hash can be generated with `generate_password <password>.sh`
+The project provides two services for monitoring the correctomatic queues:
+- **BullMQ Dashboard**: You can see the current state of the correction queues here. It's accessible at [http://localhost:3000/](http://localhost:3000/)
+- **Redis Insight**: To inspect the contents of the Redis server. It's for low-level debugging, you probably won't need this. It's accessible at [http://localhost:5540/](http://localhost:5540/). You will need to configure the connection data to the redis server the first time you use this service.
 
-The management interface can be accessed at [http://localhost:15672](http://localhost:15672)
+The Redis server exposes the port 6379 on localhost, so you can also connect to redis using a `redis-cli` image, or whatever Redis DB tool you prefer:
+```sh
+USER=default
+PASS="<the password here>"
+
+docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://$USER:$PASS@redis -p 6379
+```
 
 ## Correctomatic components
 
@@ -39,7 +46,7 @@ Launch a work for correction:
 
 ```bash
 curl --request POST \
-  --url http://localhost:3000/grade \
+  --url http://localhost:8080/grade \
   --header 'Content-Type: multipart/form-data' \
   --form file=@<PATH OF YOUR FILE> \
   --form work_id=<A RANDOM WORK ID> \
@@ -51,41 +58,5 @@ You will receive a POST on the callback URL once the work has finished
 
 
 
-### BullMQ information and tests
-
-- [Redis Insights](http://localhost:5540)
-- [BullMQ dashboard](http://localhost:3000)
-
-
-
-Implemented:
-https://github.com/igrek8/bullmq-dashboard
-
-https://hub.docker.com/r/igrek8/bullmq-dashboard
-
-
-Alternatives:
-https://github.com/felixmosh/bull-board
-
-
-### Redis
-
-Connect to redis:
-```sh
-USER=correctomatic
-PASS=banana
-docker run -it --rm --network=correctomatic-server_default redis redis-cli -u redis://$USER:$PASS@redis -p 6379
-```
-
-Open a shell in redis container:
-```sh
-docker exec -it correctomatic-redis /bin/sh
-alias ll='ls -la'
-```
-
-To see the contents of the redis server:
-`docker run --rm --network correctomatic-server_default -p 5540:5540 redis/redisinsight`
-
-You must enter redis:6379 and the Redis' user and password as a new connection. In theory, you won't need to do that.
 
 
