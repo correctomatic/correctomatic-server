@@ -54,12 +54,50 @@ services:
     user: "node"
     volumes:
       - shared_folder:/tmp/correctomatic-uploads
+      # Use this for testing correction starter in local
+      # - /tmp/correctomatic-uploads:/tmp/correctomatic-uploads
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       UPLOAD_DIRECTORY: /tmp/correctomatic-uploads
+
+  # This is the base image for the correction containers
+  runner_base:
+    build:
+      context: ./correctomatic/runner_base
+      args:
+        SHARED_FOLDER: /tmp/correctomatic-uploads
+        # This MUST match the group ID of the Docker group on your host
+        # Specify it in the .env file
+        DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
+        DELAY_SECONDS: 10 # To give some time to RabbitMQ to start
+    image: correctomatic_runner_base
+    entrypoint: ["echo", "This is the base image for the correction containers"]
+
+  # Process for starting the correction containers
+  starter:
+    image: correctomatic_runner_base
+    depends_on:
+      - runner_base
+      - redis
+    user: "node"
+    entrypoint: ["/delayed_start.sh", "starter"]
+    volumes:
+      - shared_folder:/tmp/correctomatic-uploads
+      # This volume is needed to communicate with the Docker daemon on the host
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USER: default
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      # Uncomment for setting the log level
+      LOG_LEVEL: "debug"
+      # Uncomment for debugging the completer: if 'S', containers should be started by hand
+      DONT_START_CONTAINER: S
+
 
 volumes:
   redisinsight:   # Connection data is saved here
