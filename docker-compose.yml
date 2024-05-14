@@ -1,4 +1,7 @@
 services:
+  #----------------------------------------
+  # Backend services
+  #----------------------------------------
   redis:
     image: redis:7
     container_name: correctomatic-redis
@@ -8,6 +11,9 @@ services:
     ports:
       - "6379:6379"
 
+  #----------------------------------------
+  # Monitoring services
+  #----------------------------------------
   redis-insight:
     image: redis/redisinsight
     container_name: correctomatic-redisinsight
@@ -19,10 +25,11 @@ services:
     volumes:
       - redisinsight:/data
 
-
-  dashboard:
+  bullmq-dashboard:
     image: igrek8/bullmq-dashboard
     container_name: correctomatic-dashboard
+    depends_on:
+      - redis
     ports:
       - "3000:3000"
     # TO-DO: this image doesn't addmit setting a user
@@ -32,6 +39,29 @@ services:
       "--redis-password", "${REDIS_PASSWORD}"
       ]
 
+  #----------------------------------------
+  # Correctomatic services
+  #----------------------------------------
+  api: # API service for sending works to the correction queue
+    build:
+      context: ./correctomatic/api
+      args:
+        SHARED_FOLDER: /tmp/correctomatic-uploads
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"
+    user: "node"
+    volumes:
+      - shared_folder:/tmp/correctomatic-uploads
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USER: default
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      UPLOAD_DIRECTORY: /tmp/correctomatic-uploads
+
 volumes:
   redisinsight:   # Connection data is saved here
   redis_data:     # For persisting bullmq data
+  shared_folder:  # For sharing files between the API and the correction worker
