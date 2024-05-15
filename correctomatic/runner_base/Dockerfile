@@ -37,9 +37,10 @@ WORKDIR /home/node/app
 
 # Clone the repo and install dependencies
 ENV REPO_URL https://github.com/correctomatic/correction-runner.git
+ENV REPO_BRANCH bullmq
 
-RUN git clone $REPO_URL correction-api
-WORKDIR /home/node/app/correction-api
+RUN git clone -b $REPO_BRANCH $REPO_URL correction-runner
+WORKDIR /home/node/app/correction-runner
 RUN npm install
 
 # Delayed start, to allow the RabbitMQ container to initialize
