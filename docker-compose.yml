@@ -43,6 +43,7 @@ services:
   # Correctomatic services
   #----------------------------------------
   api: # API service for sending works to the correction queue
+    image: correctomatic_api
     build:
       context: ./correctomatic/api
       args:
@@ -54,7 +55,7 @@ services:
     user: "node"
     volumes:
       # Shared folder MUST be binded to a host's folder, because docker runs in the host
-      - /tmp:/tmp/correctomatic-uploads
+      - ${UPLOAD_DIRECTORY}:/tmp/correctomatic-uploads
       # Use this for testing correction starter in local
       # - /tmp/correctomatic-uploads:/tmp/correctomatic-uploads
     environment:
@@ -66,6 +67,7 @@ services:
 
   # This is the base image for the correction containers
   runner_base:
+    image: correctomatic_runner_base
     build:
       context: ./correctomatic/runner_base
       args:
@@ -74,11 +76,11 @@ services:
         # Specify it in the .env file
         DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
         DELAY_SECONDS: 10 # To give some time to RabbitMQ to start
-    image: correctomatic_runner_base
     entrypoint: ["echo", "This is the base image for the correction containers"]
 
   # Process for starting the correction containers
   starter:
+    # Same image for all the correctomatic services
     image: correctomatic_runner_base
     depends_on:
       - runner_base
@@ -87,7 +89,7 @@ services:
     entrypoint: ["/delayed_start.sh", "starter"]
     volumes:
       # Shared folder MUST be binded to a host's folder, because docker runs in the host
-      - /tmp:/tmp/correctomatic-uploads
+      - ${UPLOAD_DIRECTORY}:/tmp/correctomatic-uploads
       # This volume is needed to communicate with the Docker daemon on the host
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -95,8 +97,10 @@ services:
       REDIS_PORT: 6379
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      # Variables for debugging
+      NODE_ENV: "development" # Default is production
       # Uncomment for setting the log level
-      LOG_LEVEL: "debug"
+      LOG_LEVEL: "info"
       # Uncomment for debugging the completer: if 'S', containers should be started by hand
       DONT_START_CONTAINER: S
 
