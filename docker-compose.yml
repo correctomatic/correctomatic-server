@@ -47,7 +47,7 @@ services:
     build:
       context: ./correctomatic/api
       args:
-        SHARED_FOLDER: /tmp/correctomatic-uploads
+        SHARED_FOLDER: ${UPLOAD_DIRECTORY} # For creating the folder in the image
     depends_on:
       - redis
     ports:
@@ -55,7 +55,7 @@ services:
     user: "node"
     volumes:
       # Shared folder MUST be binded to a host's folder, because docker runs in the host
-      - ${UPLOAD_DIRECTORY}:/tmp/correctomatic-uploads
+      - ${UPLOAD_DIRECTORY}:${UPLOAD_DIRECTORY}
       # Use this for testing correction starter in local
       # - /tmp/correctomatic-uploads:/tmp/correctomatic-uploads
     environment:
@@ -63,7 +63,11 @@ services:
       REDIS_PORT: 6379
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-      UPLOAD_DIRECTORY: /tmp/correctomatic-uploads
+      UPLOAD_DIRECTORY: ${UPLOAD_DIRECTORY}
+      # Debug variables
+      NODE_ENV: "development" # Default is production
+      # Uncomment for setting the log level
+      LOG_LEVEL: "debug"
 
   # This is the base image for the correction containers
   runner_base:
@@ -102,7 +106,7 @@ services:
       # Variables for debugging
       NODE_ENV: "development" # Default is production
       # Uncomment for setting the log level
-      LOG_LEVEL: "info"
+      LOG_LEVEL: "debug"
       # Uncomment for debugging the completer: if 'S', containers should be started by hand
       DONT_START_CONTAINER: S
 

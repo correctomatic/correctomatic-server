@@ -18,7 +18,7 @@ You can launch all the systems with `docker compose up`.
 Alternatively, you can launch/stop the Redis and the correctomatic processes separately with:
 - `docker compose up redis`
 - `docker compose up api`
-- `docker compose up starter` (TO-DO)
+- `docker compose up starter`
 - `docker compose up completer` (TO-DO)
 - `docker compose up notifier` (TO-DO)
 
