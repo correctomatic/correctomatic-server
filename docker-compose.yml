@@ -89,7 +89,9 @@ services:
     entrypoint: ["/delayed_start.sh", "starter"]
     volumes:
       # Shared folder MUST be binded to a host's folder, because docker runs in the host
-      - ${UPLOAD_DIRECTORY}:/tmp/correctomatic-uploads
+      # It must be the same path in the container and in the host, because the container
+      # will bind mount the host's file
+      - ${UPLOAD_DIRECTORY}:${UPLOAD_DIRECTORY}
       # This volume is needed to communicate with the Docker daemon on the host
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
