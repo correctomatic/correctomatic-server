@@ -19,7 +19,7 @@ Alternatively, you can launch/stop the Redis and the correctomatic processes sep
 - `docker compose up redis`
 - `docker compose up api`
 - `docker compose up starter`
-- `docker compose up completer` (TESTING)
+- `docker compose up completer`
 - `docker compose up notifier` (TO-DO)
 
 You don't need the correctomatic processes for development: you should launch the Redis server and run the other processes in your machine.
