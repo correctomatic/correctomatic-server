@@ -42,6 +42,10 @@ docker run -it --rm --network=correctomatic-server_default redis redis-cli -u re
 
 TO-DO
 
+### Correction API
+
+TO-DO
+
 Launch a work for correction:
 
 ```bash
@@ -54,6 +58,22 @@ curl --request POST \
   --form callback=http://localhost:9000
 ```
 You will receive a POST on the callback URL once the work has finished
+
+
+### Correction Starter
+
+TO-DO
+
+### Correction Completer
+
+TO-DO
+
+### Correction Notifier
+
+TO-DO
+
+
+
 
 
 
