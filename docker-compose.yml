@@ -39,10 +39,16 @@ services:
       "--redis-password", "${REDIS_PASSWORD}"
       ]
 
-  #----------------------------------------
+  # ---------------------------------------------------------
+  # ---------------------------------------------------------
   # Correctomatic services
-  #----------------------------------------
-  api: # API service for sending works to the correction queue
+  # ---------------------------------------------------------
+  # ---------------------------------------------------------
+
+  # ---------------------------------------------------------
+  # API service for sending works to the correction queue
+  # ---------------------------------------------------------
+  api:
     image: correctomatic_api
     build:
       context: ./correctomatic/api
@@ -70,6 +76,7 @@ services:
       LOG_LEVEL: "debug"
 
   # This is the base image for the correction containers
+  # All the correction containers (starter, completer, notifier) will use this image
   runner_base:
     image: correctomatic_runner_base
     build:
@@ -82,7 +89,9 @@ services:
         DELAY_SECONDS: 10 # To give some time to RabbitMQ to start
     entrypoint: ["echo", "This is the base image for the correction containers"]
 
-  # Process for starting the correction containers
+  # ---------------------------------------------------------
+  # Process for launching in Docker the correction containers
+  # ---------------------------------------------------------
   starter:
     # Same image for all the correctomatic services
     image: correctomatic_runner_base
@@ -108,7 +117,31 @@ services:
       # Uncomment for setting the log level
       LOG_LEVEL: "debug"
       # Uncomment for debugging the completer: if 'S', containers should be started by hand
-      DONT_START_CONTAINER: S
+      # DONT_START_CONTAINER: S
+
+  # ----------------------------------------------------------------------------------
+  # Process for listening to finished containers and mark the corrections as completed
+  # ----------------------------------------------------------------------------------
+  completer:
+    # Same image for all the correctomatic services
+    image: correctomatic_runner_base
+    depends_on:
+      - runner_base
+      - redis
+    user: "node"
+    entrypoint: ["/delayed_start.sh", "completer"]
+    volumes:
+      # This volume is needed to communicate with the Docker daemon on the host
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USER: default
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      # Variables for debugging
+      NODE_ENV: "development" # Default is production
+      # Uncomment for setting the log level
+      LOG_LEVEL: "debug"
 
 
 volumes:
