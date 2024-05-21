@@ -22,6 +22,11 @@ Alternatively, you can launch/stop the Redis and the correctomatic processes sep
 - `docker compose up completer`
 - `docker compose up notifier` (TO-DO)
 
+Or use the script up_except.sh to launch all the services except the ones you specify, for example:
+```sh
+./up_except.sh completer notifier
+```
+
 You don't need the correctomatic processes for development: you should launch the Redis server and run the other processes in your machine.
 
 ## Monitoring
