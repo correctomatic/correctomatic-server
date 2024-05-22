@@ -37,7 +37,7 @@ WORKDIR /home/node/app
 
 # Clone the repo and install dependencies
 ENV REPO_URL https://github.com/correctomatic/correction-runner.git
-ENV REPO_BRANCH bullmq
+ENV REPO_BRANCH master
 
 RUN git clone -b $REPO_BRANCH $REPO_URL correction-runner
 WORKDIR /home/node/app/correction-runner

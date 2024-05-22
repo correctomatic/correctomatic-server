@@ -70,10 +70,9 @@ services:
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       UPLOAD_DIRECTORY: ${UPLOAD_DIRECTORY}
-      # Debug variables
-      NODE_ENV: "development" # Default is production
-      # Uncomment for setting the log level
-      LOG_LEVEL: "debug"
+      # Variables for debugging
+      NODE_ENV: ${NODE_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
 
   # This is the base image for the correction containers
   # All the correction containers (starter, completer, notifier) will use this image
@@ -86,7 +85,7 @@ services:
         # This MUST match the group ID of the Docker group on your host
         # Specify it in the .env file
         DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
-        DELAY_SECONDS: 10 # To give some time to RabbitMQ to start
+        DELAY_SECONDS: 5 # To give some time to RabbitMQ to start
     entrypoint: ["echo", "This is the base image for the correction containers"]
 
   # ---------------------------------------------------------
@@ -113,11 +112,9 @@ services:
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       # Variables for debugging
-      NODE_ENV: "development" # Default is production
-      # Uncomment for setting the log level
-      LOG_LEVEL: "debug"
-      # Uncomment for debugging the completer: if 'S', containers should be started by hand
-      # DONT_START_CONTAINER: S
+      NODE_ENV: ${NODE_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DONT_START_CONTAINER: ${DONT_START_CONTAINER:-N}
 
   # ----------------------------------------------------------------------------------
   # Process for listening to finished containers and mark the corrections as completed
@@ -139,10 +136,38 @@ services:
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       # Variables for debugging
-      NODE_ENV: "development" # Default is production
-      # Uncomment for setting the log level
-      LOG_LEVEL: "debug"
+      NODE_ENV: ${NODE_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
 
+  # ----------------------------------------------------------------------------------
+  # Process for notifying the user that the correction is completed
+  # ----------------------------------------------------------------------------------
+  notifier:
+    # Same image for all the correctomatic services
+    image: correctomatic_runner_base
+    depends_on:
+      - runner_base
+      - redis
+    user: "node"
+    entrypoint: ["/delayed_start.sh", "notifier"]
+    volumes:
+      # This volume is needed to communicate with the Docker daemon on the host
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Take in account that notifications are sent from a container
+    # and localhost is the container, not the host
+    # the host is host.docker.internal
+    # You can add extra hosts for notification here
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    #   - notification.host.com:${NOTIFICATION_HOST_COM}
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USER: default
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      # Variables for debugging
+      NODE_ENV: ${NODE_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
 
 volumes:
   redisinsight:   # Connection data is saved here
