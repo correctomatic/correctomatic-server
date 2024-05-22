@@ -1,7 +1,7 @@
 FROM node:20.12.2-alpine
 # Shared folder between containers
 ARG SHARED_FOLDER
-# Delayed start, to allow the RabbitMQ container to initialize
+# Delayed start, to allow the Redis container to initialize
 ARG DELAY_SECONDS=5
 
 # DOCKER_GROUP_ID MUST match the Docker group ID on the host.
@@ -43,7 +43,7 @@ RUN git clone -b $REPO_BRANCH $REPO_URL correction-runner
 WORKDIR /home/node/app/correction-runner
 RUN npm install
 
-# Delayed start, to allow the RabbitMQ container to initialize
+# Delayed start, to allow the Redis container to initialize
 COPY --chown=node:node delayed_start.sh /
 RUN chmod +x /delayed_start.sh
 ENV DELAY_SECONDS=${DELAY_SECONDS}

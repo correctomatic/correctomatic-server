@@ -4,8 +4,8 @@ The purpose of this project is to provide a docker compose file for starting a c
 
 The correctomatic system has these components:
 - A **Redis** server as a backend for BullMQ queue system
-- The **correction API**: is an API endpoint for launching corrections. It puts the correction on the RabbitMQ queue for further processing.
-- The **correction starter**: Receives works from Rabbit and launches the docker container for correcting the exercise.
+- The **correction API**: is an API endpoint for launching corrections. It puts the correction on the bullMQ queue for further processing.
+- The **correction starter**: Receives works from bullMQ and launches the docker container for correcting the exercise.
 - The **correction completer**: Detects when a container finished and stores the correction result.
 - The **correction notifier**: Calls the callback with the correction results, notifying the client which started the correction.
 

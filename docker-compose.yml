@@ -85,7 +85,7 @@ services:
         # This MUST match the group ID of the Docker group on your host
         # Specify it in the .env file
         DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
-        DELAY_SECONDS: 5 # To give some time to RabbitMQ to start
+        DELAY_SECONDS: 5 # To give some time to Redis to start
     entrypoint: ["echo", "This is the base image for the correction containers"]
 
   # ---------------------------------------------------------
