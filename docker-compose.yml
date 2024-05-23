@@ -165,6 +165,8 @@ services:
       REDIS_PORT: 6379
       REDIS_USER: default
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      # Number of concurrent jobs sending notifications of completed tasks
+      CONCURRENT_NOTIFIERS: ${CONCURRENT_NOTIFIERS:-1}
       # Variables for debugging
       NODE_ENV: ${NODE_ENV:-development}
       LOG_LEVEL: ${LOG_LEVEL:-info}
