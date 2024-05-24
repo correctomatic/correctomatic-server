@@ -1,7 +1,7 @@
 FROM node:20.12.2-alpine
 # Shared folder between containers
 ARG SHARED_FOLDER
-# Delayed start, to allow the RabbitMQ container to initialize
+# Delayed start, to allow the Redis container to initialize
 ARG DELAY_SECONDS=5
 
 # DOCKER_GROUP_ID MUST match the Docker group ID on the host.
@@ -37,12 +37,13 @@ WORKDIR /home/node/app
 
 # Clone the repo and install dependencies
 ENV REPO_URL https://github.com/correctomatic/correction-runner.git
+ENV REPO_BRANCH master
 
-RUN git clone $REPO_URL correction-api
-WORKDIR /home/node/app/correction-api
+RUN git clone -b $REPO_BRANCH $REPO_URL correction-runner
+WORKDIR /home/node/app/correction-runner
 RUN npm install
 
-# Delayed start, to allow the RabbitMQ container to initialize
+# Delayed start, to allow the Redis container to initialize
 COPY --chown=node:node delayed_start.sh /
 RUN chmod +x /delayed_start.sh
 ENV DELAY_SECONDS=${DELAY_SECONDS}
