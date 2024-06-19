@@ -26,6 +26,11 @@ addgroup -g ${DOCKER_GROUP_ID} docker; \
 fi && \
 adduser node `getent group ${DOCKER_GROUP_ID} | cut -d: -f1`
 
+
+# For debugging purposes
+RUN apk add curl vim \
+    && rm -rf /var/cache/apk/*
+
 USER node
 
 # Shared folder between containers
@@ -47,4 +52,3 @@ RUN npm install
 COPY --chown=node:node delayed_start.sh /
 RUN chmod +x /delayed_start.sh
 ENV DELAY_SECONDS=${DELAY_SECONDS}
-
