@@ -31,7 +31,7 @@ services:
     depends_on:
       - redis
     ports:
-      - "3000:3000"
+      - "3030:3000"
     # TO-DO: this image doesn't addmit setting a user
     command: [
       "--redis-host", "redis",
@@ -57,7 +57,7 @@ services:
     depends_on:
       - redis
     ports:
-      - "8080:8080"
+      - "3000:3000"
     user: "node"
     volumes:
       # Shared folder MUST be binded to a host's folder, because docker runs in the host
@@ -65,6 +65,7 @@ services:
       # Use this for testing correction starter in local
       # - /tmp/correctomatic-uploads:/tmp/correctomatic-uploads
     environment:
+      PORT: 3000
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_USER: default

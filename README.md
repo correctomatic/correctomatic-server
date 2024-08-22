@@ -32,7 +32,7 @@ You don't need the correctomatic processes for development: you should launch th
 ## Monitoring
 
 The project provides two services for monitoring the correctomatic queues:
-- **BullMQ Dashboard**: You can see the current state of the correction queues here. It's accessible at [http://localhost:3000/](http://localhost:3000/)
+- **BullMQ Dashboard**: You can see the current state of the correction queues here. It's accessible at [http://localhost:3030/](http://localhost:3030/)
 - **Redis Insight**: To inspect the contents of the Redis server. It's for low-level debugging, you probably won't need this. It's accessible at [http://localhost:5540/](http://localhost:5540/). You will need to configure the connection data to the redis server the first time you use this service.
 
 The Redis server exposes the port 6379 on localhost, so you can also connect to redis using a `redis-cli` image, or whatever Redis DB tool you prefer:
