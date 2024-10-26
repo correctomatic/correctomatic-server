@@ -54,6 +54,8 @@ services:
       context: ./correctomatic/api
       args:
         SHARED_FOLDER: ${UPLOAD_DIRECTORY} # For creating the folder in the image
+        REPO_URL: ${API_REPO_URL:-https://github.com/correctomatic/correction-API.git}
+        BRANCH: ${API_BRANCH:-master}
     depends_on:
       - redis
     ports:
@@ -87,6 +89,8 @@ services:
         # Specify it in the .env file
         DOCKER_GROUP_ID: ${DOCKER_GROUP_ID}
         DELAY_SECONDS: 5 # To give some time to Redis to start
+        REPO_URL: ${RUNNER_REPO_URL:-https://github.com/correctomatic/correction-runner.git}
+        BRANCH: ${RUNNER_BRANCH:-master}
     entrypoint: ["echo", "This is the base image for the correction containers"]
 
   # ---------------------------------------------------------

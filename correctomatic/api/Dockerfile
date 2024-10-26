@@ -1,5 +1,7 @@
 FROM node:20.12.2-alpine
 ARG SHARED_FOLDER
+ARG REPO_URL="https://github.com/correctomatic/correction-API.git"
+ARG BRANCH="master"
 
 RUN apk add --no-cache git
 USER node
@@ -12,9 +14,7 @@ RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
 # Clone the repo and install dependencies
-ENV REPO_URL https://github.com/correctomatic/correction-API.git
-
-RUN git clone $REPO_URL correction-api
+RUN git clone -b $BRANCH $REPO_URL correction-api
 WORKDIR /home/node/app/correction-api
 RUN npm install
 

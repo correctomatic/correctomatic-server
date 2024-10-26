@@ -3,6 +3,8 @@ FROM node:20.12.2-alpine
 ARG SHARED_FOLDER
 # Delayed start, to allow the Redis container to initialize
 ARG DELAY_SECONDS=5
+ARG REPO_URL="https://github.com/correctomatic/correction-runner.git"
+ARG BRANCH="master"
 
 # DOCKER_GROUP_ID MUST match the Docker group ID on the host.
 # This is necessary to allow the container to access the Docker socket.
@@ -41,10 +43,7 @@ RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
 # Clone the repo and install dependencies
-ENV REPO_URL https://github.com/correctomatic/correction-runner.git
-ENV REPO_BRANCH master
-
-RUN git clone -b $REPO_BRANCH $REPO_URL correction-runner
+RUN git clone -b $BRANCH $REPO_URL correction-runner
 WORKDIR /home/node/app/correction-runner
 RUN npm install
 
