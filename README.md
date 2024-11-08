@@ -17,7 +17,14 @@ The API and starter subsystems must share a path to the correction files: the ea
 
 ## Launch the server
 
-You can launch all the systems with `docker compose up`. After that, you can access the API at [http://localhost:3000/](http://localhost:3000/) and use the API to launch corrections.
+You can launch all the systems with `docker compose up`. The database must be filled with the correctomatic data before using the API, so you need to run the following commands once the containers are up:
+```sh
+docker compose exec api npx sequelize-cli db:migrate
+docker compose exec api npx sequelize-cli db:seed:all
+```
+
+After that, you can access the API at [http://localhost:3000/](http://localhost:3000/) and use the API to launch corrections.
+
 It will use your local docker daemon to launch the correction containers, so you need to have docker installed in your machine and access to the registry
 containing the correction images, or the images dowloades in your machine.
 
