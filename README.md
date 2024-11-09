@@ -72,7 +72,7 @@ curl --request POST \
   --form file=@<PATH OF YOUR FILE> \
   --form work_id=<A RANDOM WORK ID> \
   --form assignment_id=<THE ASSIGNMENT ID> \
-  --form callback=http://localhost:9000
+  --form callback=http://host.docker.internal:9000
 ```
 You will receive a POST on the callback URL once the work has finished
 
