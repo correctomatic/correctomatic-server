@@ -2,6 +2,9 @@ FROM node:20.12.2-alpine
 ARG SHARED_FOLDER
 ARG REPO_URL="https://github.com/correctomatic/correction-API.git"
 ARG BRANCH="master"
+# Delayed start, to allow the Redis container to initialize
+ARG DELAY_SECONDS=5
+ENV DELAY_SECONDS=${DELAY_SECONDS}
 
 RUN apk add --no-cache git
 USER node
@@ -19,4 +22,9 @@ WORKDIR /home/node/app/correction-api
 RUN npm install
 
 EXPOSE 3000
-ENTRYPOINT [ "node", "src/index.js" ]
+
+# Delayed start, to allow the DB container to initialize
+COPY --chown=node:node delayed_start.sh /
+RUN chmod +x /delayed_start.sh
+ENV DELAY_SECONDS=${DELAY_SECONDS}
+CMD [ "/delayed_start.sh" ]

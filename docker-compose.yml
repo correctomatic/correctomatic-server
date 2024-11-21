@@ -67,8 +67,10 @@ services:
         SHARED_FOLDER: ${UPLOAD_DIRECTORY} # For creating the folder in the image
         REPO_URL: ${API_REPO_URL:-https://github.com/correctomatic/correction-API.git}
         BRANCH: ${API_BRANCH:-master}
+        DELAY_SECONDS: 5 # To give some time to DB to start
     depends_on:
       - redis
+      - db
     ports:
       - "3000:3000"
     user: "node"
