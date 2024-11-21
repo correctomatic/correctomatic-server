@@ -17,7 +17,23 @@ The API and starter subsystems must share a path to the correction files: the ea
 
 ## Launch the server
 
-You can launch all the systems with `docker compose up`. After that, you can access the API at [http://localhost:3000/](http://localhost:3000/) and use the API to launch corrections.
+You can launch all the systems with `docker compose up`. The database must be filled with the correctomatic data before using the API, so you need to run the following command once the containers are up:
+```sh
+docker compose exec api npx sequelize-cli db:migrate
+```
+
+The API will have an empty database, you can seed it with:
+```sh
+docker compose exec api npx sequelize-cli db:seed:all
+```
+
+Or just create a root user and start from scratch:
+```sh
+docker compose exec -e ROOT_USER=root -e ROOT_PASSWORD=root api yarn create-root-user
+```
+
+After that, you can access the API at [http://localhost:3000/](http://localhost:3000/) and use the API to launch corrections.
+
 It will use your local docker daemon to launch the correction containers, so you need to have docker installed in your machine and access to the registry
 containing the correction images, or the images dowloades in your machine.
 
@@ -65,7 +81,7 @@ curl --request POST \
   --form file=@<PATH OF YOUR FILE> \
   --form work_id=<A RANDOM WORK ID> \
   --form assignment_id=<THE ASSIGNMENT ID> \
-  --form callback=http://localhost:9000
+  --form callback=http://host.docker.internal:9000
 ```
 You will receive a POST on the callback URL once the work has finished
 
